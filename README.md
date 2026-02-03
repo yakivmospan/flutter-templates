@@ -74,9 +74,9 @@ The main layers are:
 - Interactors knows about Repositories(Interfaces), Infrastructure Services (Interfaces), Entities.
 - Repositories knows about Data Sources (preferably Interfaces), Entities.
 
-### Overview
+## Overview
 
-## Trade-offs
+### Trade-offs
 
 This project was made in 4 hours. Due to the limited time, some trade-offs were made:
 - UI was made mainly with AI assistance to speed up the process;
