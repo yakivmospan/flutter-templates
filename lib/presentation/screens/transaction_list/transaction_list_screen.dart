@@ -80,13 +80,6 @@ class TransactionListScreen extends StatelessWidget {
                 ),
               ),
             );
-            if (result == true) {
-              if (context.mounted) {
-                context
-                    .read<TransactionListBloc>()
-                    .add(RefreshTransactions());
-              }
-            }
           },
         );
       },

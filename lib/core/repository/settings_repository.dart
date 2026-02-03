@@ -1,19 +1,22 @@
+import '../storage/storage.dart';
+
 abstract class SettingsRepository {
   Future<bool> isDarkMode();
-
   Future<void> setDarkMode(bool isDark);
 }
 
 class SettingsRepositoryImpl implements SettingsRepository {
-  bool _isDarkMode = false;
+  final Storage storage;
+
+  SettingsRepositoryImpl({required this.storage});
 
   @override
   Future<bool> isDarkMode() async {
-    return _isDarkMode;
+    return await storage.settingsDao.isDarkMode();
   }
 
   @override
   Future<void> setDarkMode(bool isDark) async {
-    _isDarkMode = isDark;
+    await storage.settingsDao.setDarkMode(isDark);
   }
 }

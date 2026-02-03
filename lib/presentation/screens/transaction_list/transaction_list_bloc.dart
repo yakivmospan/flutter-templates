@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/entity/Transaction.dart';
 import '../../../core/repository/transactions_repository.dart';
@@ -8,6 +9,7 @@ class TransactionListBloc
     extends Bloc<TransactionListEvent, TransactionListState> {
   final TransactionsRepository transactionsRepository;
   List<Transaction> _allTransactions = [];
+  StreamSubscription? _transactionSubscription;
 
   TransactionListBloc({required this.transactionsRepository})
       : super(TransactionListInitial()) {
@@ -15,6 +17,18 @@ class TransactionListBloc
     on<RefreshTransactions>(_onRefreshTransactions);
     on<FilterTransactions>(_onFilterTransactions);
     on<ClearFilters>(_onClearFilters);
+
+    _transactionSubscription = transactionsRepository.transactionChanges.listen(
+          (_) {
+        add(RefreshTransactions());
+      },
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _transactionSubscription?.cancel();
+    return super.close();
   }
 
   Future<void> _onLoadTransactions(
@@ -74,14 +88,14 @@ class TransactionListBloc
       if (event.startDate != null) {
         filtered = filtered
             .where((t) =>
-                t.date.isAfter(event.startDate!) ||
-                t.date.isAtSameMomentAs(event.startDate!))
+        t.date.isAfter(event.startDate!) ||
+            t.date.isAtSameMomentAs(event.startDate!))
             .toList();
       }
       if (event.endDate != null) {
         filtered = filtered
             .where((t) =>
-                t.date.isBefore(event.endDate!.add(const Duration(days: 1))))
+            t.date.isBefore(event.endDate!.add(const Duration(days: 1))))
             .toList();
       }
 

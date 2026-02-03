@@ -1,6 +1,8 @@
 import '../entity/Transaction.dart';
+import '../storage/storage.dart';
 
 abstract class TransactionsRepository {
+  Stream<void> get transactionChanges;
   Future<List<Transaction>> getTransactions();
   Future<Transaction> getTransaction(String id);
   Future<void> addTransaction(Transaction transaction);
@@ -10,88 +12,56 @@ abstract class TransactionsRepository {
 }
 
 class TransactionsRepositoryImpl implements TransactionsRepository {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: '1',
-      type: TransactionType.income,
-      amount: 5000.0,
-      category: 'Salary',
-      date: DateTime.now().subtract(const Duration(days: 5)),
-      notes: 'Monthly salary',
-    ),
-    Transaction(
-      id: '2',
-      type: TransactionType.expense,
-      amount: 150.0,
-      category: 'Groceries',
-      date: DateTime.now().subtract(const Duration(days: 3)),
-      notes: 'Weekly shopping',
-    ),
-    Transaction(
-      id: '3',
-      type: TransactionType.expense,
-      amount: 50.0,
-      category: 'Transport',
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      notes: 'Gas',
-    ),
-    Transaction(
-      id: '4',
-      type: TransactionType.income,
-      amount: 200.0,
-      category: 'Freelance',
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      notes: 'Side project payment',
-    ),
-    Transaction(
-      id: '5',
-      type: TransactionType.expense,
-      amount: 80.0,
-      category: 'Entertainment',
-      date: DateTime.now(),
-      notes: 'Cinema and dinner',
-    ),
-  ];
+  final Storage storage;
+
+  TransactionsRepositoryImpl({required this.storage});
+
+  @override
+  Stream<void> get transactionChanges =>
+      storage.transactionDao.transactionStream.map((_) {});
 
   @override
   Future<List<Transaction>> getTransactions() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
-    return List.from(_transactions);
+    final transactions = await storage.transactionDao.getAll();
+    transactions.sort((a, b) => b.date.compareTo(a.date));
+    return transactions;
   }
 
   @override
   Future<Transaction> getTransaction(String id) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _transactions.firstWhere((t) => t.id == id);
+    await Future.delayed(const Duration(milliseconds: 200));
+    final transaction = await storage.transactionDao.getById(id);
+    if (transaction == null) {
+      throw Exception('Transaction not found');
+    }
+    return transaction;
   }
 
   @override
   Future<void> addTransaction(Transaction transaction) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    _transactions.add(transaction);
+    await storage.transactionDao.add(transaction);
   }
 
   @override
   Future<void> updateTransaction(Transaction transaction) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    final index = _transactions.indexWhere((t) => t.id == transaction.id);
-    if (index != -1) {
-      _transactions[index] = transaction;
-    }
+    await storage.transactionDao.update(transaction);
   }
 
   @override
   Future<void> deleteTransaction(String id) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    _transactions.removeWhere((t) => t.id == id);
+    await storage.transactionDao.delete(id);
   }
 
   @override
   Future<double> getBalance() async {
     await Future.delayed(const Duration(milliseconds: 200));
+    final transactions = await storage.transactionDao.getAll();
+
     double balance = 0.0;
-    for (var transaction in _transactions) {
+    for (var transaction in transactions) {
       if (transaction.type == TransactionType.income) {
         balance += transaction.amount;
       } else {

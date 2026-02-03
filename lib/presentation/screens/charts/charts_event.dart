@@ -5,4 +5,7 @@ abstract class ChartsEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
 class LoadCharts extends ChartsEvent {}
+
+class RefreshCharts extends ChartsEvent {}

@@ -38,4 +38,12 @@ class StringIds {
   static const clearFilters = 'clear_filters';
   static const spendingByCategory = 'spending_by_category';
   static const deleteConfirmation = 'delete_confirmation';
+  static const noExpensesToDisplay = 'no_expenses_to_display';
+  static const ofTotal = 'of_total';
+  static const startDate = 'start_date';
+  static const endDate = 'end_date';
+  static const to = 'to';
+  static const pleaseEnterAmount = 'please_enter_amount';
+  static const pleaseEnterValidAmount = 'please_enter_valid_amount';
+  static const pleaseEnterCategory = 'please_enter_category';
 }

@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/entity/Transaction.dart';
 import '../../localization/localization.dart';
-import '../transaction_list/transaction_list_bloc.dart';
-import '../transaction_list/transaction_list_state.dart';
 import 'charts_bloc.dart';
+import 'charts_event.dart';
 import 'charts_state.dart';
 
 class ChartsScreen extends StatelessWidget {
@@ -17,20 +16,29 @@ class ChartsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChartsBloc, ChartsState>(
       builder: (context, state) {
-        if (state is ChartsLoaded) {
-          return BlocBuilder<TransactionListBloc, TransactionListState>(
-            builder: (context, transactionState) {
-              if (transactionState is TransactionListLoaded) {
-                return _buildCharts(context, transactionState.transactions);
-              }
-              return Center(
-                child: Text(
-                  AppLocalizations.of(context).chartsComingSoon,
+        if (state is ChartsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ChartsError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context).errorLoading,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-              );
-            },
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ChartsBloc>().add(LoadCharts());
+                  },
+                  child: Text(AppLocalizations.of(context).retry),
+                ),
+              ],
+            ),
           );
+        } else if (state is ChartsLoaded) {
+          return _buildCharts(context, state.transactions);
         }
         return const SizedBox.shrink();
       },
@@ -43,7 +51,7 @@ class ChartsScreen extends StatelessWidget {
     if (expenses.isEmpty) {
       return Center(
         child: Text(
-          'No expenses to display',
+          AppLocalizations.of(context).noExpensesToDisplay,
           style: Theme.of(context).textTheme.titleLarge,
         ),
       );
@@ -129,7 +137,7 @@ class ChartsScreen extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '\$$percentage% of total',
+                      '\$$percentage% ${AppLocalizations.of(context).ofTotal}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],

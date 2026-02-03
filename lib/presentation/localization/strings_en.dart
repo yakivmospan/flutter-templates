@@ -40,4 +40,12 @@ const Map<String, String> english = {
   StringIds.clearFilters: 'Clear Filters',
   StringIds.spendingByCategory: 'Spending by Category',
   StringIds.deleteConfirmation: 'Are you sure you want to delete this transaction?',
+  StringIds.noExpensesToDisplay: 'No expenses to display',
+  StringIds.ofTotal: 'of total',
+  StringIds.startDate: 'Start',
+  StringIds.endDate: 'End',
+  StringIds.to: 'to',
+  StringIds.pleaseEnterAmount: 'Please enter an amount',
+  StringIds.pleaseEnterValidAmount: 'Please enter a valid amount',
+  StringIds.pleaseEnterCategory: 'Please enter a category',
 };

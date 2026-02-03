@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../core/repository/settings_repository.dart';
 import '../presentation/localization/localization.dart';
@@ -9,8 +10,12 @@ import '../presentation/theme/theme.dart';
 import '../presentation/theme/theme_block.dart';
 import 'app_dependencies.dart';
 
-void main() {
-  setupAppDependencies();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  await setupAppDependencies();
+
   runApp(const App());
 }
 

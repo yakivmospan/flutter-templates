@@ -61,6 +61,14 @@ class AppLocalizations {
   String get clearFilters => translate('clear_filters');
   String get spendingByCategory => translate('spending_by_category');
   String get deleteConfirmation => translate('delete_confirmation');
+  String get noExpensesToDisplay => translate('no_expenses_to_display');
+  String get ofTotal => translate('of_total');
+  String get startDate => translate('start_date');
+  String get endDate => translate('end_date');
+  String get to => translate('to');
+  String get pleaseEnterAmount => translate('please_enter_amount');
+  String get pleaseEnterValidAmount => translate('please_enter_valid_amount');
+  String get pleaseEnterCategory => translate('please_enter_category');
 }
 
 class _AppLocalizationsDelegate

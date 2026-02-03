@@ -9,6 +9,7 @@ import '../../theme/theme_block.dart';
 import '../category/category_list_bloc.dart';
 import '../category/category_list_screen.dart';
 import '../charts/charts_bloc.dart';
+import '../charts/charts_event.dart';
 import '../charts/charts_screen.dart';
 import '../transaction/transaction_screen.dart';
 import '../transaction_list/transaction_list_bloc.dart';
@@ -29,7 +30,11 @@ class HomeScreen extends StatelessWidget {
           )..add(LoadTransactions()),
         ),
         BlocProvider(create: (context) => CategoryListBloc()),
-        BlocProvider(create: (context) => ChartsBloc()),
+        BlocProvider(
+          create: (context) => ChartsBloc(
+            transactionsRepository: getIt<TransactionsRepository>(),
+          )..add(LoadCharts()),
+        ),
       ],
       child: const _HomeScreenContent(),
     );
@@ -79,10 +84,6 @@ class _HomeScreenContentState extends State<_HomeScreenContent>
         builder: (context) => TransactionScreen(initialType: type),
       ),
     );
-
-    if (result == true && mounted) {
-      context.read<TransactionListBloc>().add(RefreshTransactions());
-    }
   }
 
   void _showFilterDialog(BuildContext context) {
@@ -179,13 +180,13 @@ class _HomeScreenContentState extends State<_HomeScreenContent>
                           label: Text(
                             startDate != null
                                 ? '${startDate!.day}/${startDate!.month}/${startDate!.year}'
-                                : 'Start',
+                                : localizations.startDate,
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text('to'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(localizations.to),
                       ),
                       Expanded(
                         child: OutlinedButton.icon(
@@ -206,7 +207,7 @@ class _HomeScreenContentState extends State<_HomeScreenContent>
                           label: Text(
                             endDate != null
                                 ? '${endDate!.day}/${endDate!.month}/${endDate!.year}'
-                                : 'End',
+                                : localizations.endDate,
                           ),
                         ),
                       ),
@@ -262,53 +263,71 @@ class _HomeScreenContentState extends State<_HomeScreenContent>
           ],
         ),
         actions: [
-          BlocBuilder<TransactionListBloc, TransactionListState>(
-            builder: (context, state) {
-              if (state is TransactionListLoaded) {
-                final isPositive = state.balance >= 0;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Center(
-                    child: Text(
-                      '\$${state.balance.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: isPositive ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-          IconButton(
-            icon: Stack(
-              children: [
-                const Icon(Icons.filter_list),
-                BlocBuilder<TransactionListBloc, TransactionListState>(
+          // Show balance only on transactions tab (index 0)
+          AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, child) {
+              if (_tabController.index == 0) {
+                return BlocBuilder<TransactionListBloc, TransactionListState>(
                   builder: (context, state) {
-                    if (state is TransactionListLoaded && state.hasActiveFilters) {
-                      return Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                    if (state is TransactionListLoaded) {
+                      final isPositive = state.balance >= 0;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Center(
+                          child: Text(
+                            '\$${state.balance.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              color: isPositive ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       );
                     }
                     return const SizedBox.shrink();
                   },
-                ),
-              ],
-            ),
-            onPressed: () => _showFilterDialog(context),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          // Only show filter button on transactions tab
+          AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, child) {
+              if (_tabController.index == 0) {
+                return IconButton(
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.filter_list),
+                      BlocBuilder<TransactionListBloc, TransactionListState>(
+                        builder: (context, state) {
+                          if (state is TransactionListLoaded && state.hasActiveFilters) {
+                            return Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
+                  onPressed: () => _showFilterDialog(context),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
           IconButton(
             icon: const Icon(Icons.brightness_6),
@@ -331,9 +350,9 @@ class _HomeScreenContentState extends State<_HomeScreenContent>
   }
 
   Widget _buildExpandableFab(
-    BuildContext context,
-    AppLocalizations localizations,
-  ) {
+      BuildContext context,
+      AppLocalizations localizations,
+      ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
