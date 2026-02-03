@@ -100,11 +100,6 @@ This project was made in 4 hours. Due to the limited time, some trade-offs were 
 - Filtering option could be improved, date filter reset added, showing selected filters in the UI above the list (at the moment user must open filter pop up again to check what is selected, its bas UX - easy to miss). Chart cold have a filter by period too.
 - Overall UI/UX and code schemas could be reviewed and improved.
 
-## AI Tools Used
-
-- GitHub Copilot - used for code suggestions and completions.
-- Claude - used for brainstorming, code snippets, and problem-solving.
-- ChatGPT - for small code snippets and explanations.
 
 ### Estimated time spent on the task
 
@@ -118,3 +113,9 @@ Development +- 4 hours:
 2. Implementing main UI screens, navigation, DI and mocked data layer. Testing UI/UX - 1.5 hour.
 3. Implementing data store layer with Hive database, preferences, repositories. - 1 hour.
 4. Final testing, bug fixing and code cleanup - 0.5 hour.
+
+### AI Tools Used
+
+- GitHub Copilot - used for code suggestions and completions.
+- Claude - used for brainstorming, code snippets, and problem-solving.
+- ChatGPT - for small code snippets and explanations.
