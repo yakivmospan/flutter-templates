@@ -29,7 +29,6 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
 
   @override
   Future<Transaction> getTransaction(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
     final transaction = await storage.transactionDao.getById(id);
     if (transaction == null) {
       throw Exception('Transaction not found');
@@ -39,25 +38,21 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
 
   @override
   Future<void> addTransaction(Transaction transaction) async {
-    await Future.delayed(const Duration(milliseconds: 300));
     await storage.transactionDao.add(transaction);
   }
 
   @override
   Future<void> updateTransaction(Transaction transaction) async {
-    await Future.delayed(const Duration(milliseconds: 300));
     await storage.transactionDao.update(transaction);
   }
 
   @override
   Future<void> deleteTransaction(String id) async {
-    await Future.delayed(const Duration(milliseconds: 300));
     await storage.transactionDao.delete(id);
   }
 
   @override
   Future<double> getBalance() async {
-    await Future.delayed(const Duration(milliseconds: 200));
     final transactions = await storage.transactionDao.getAll();
 
     double balance = 0.0;

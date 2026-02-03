@@ -18,7 +18,7 @@ class TransactionDtoAdapter extends TypeAdapter<TransactionDto> {
     };
     return TransactionDto(
       id: fields[0] as String,
-      type: fields[1] as String,
+      type: fields[1] as int,
       amount: fields[2] as double,
       category: fields[3] as String,
       date: fields[4] as DateTime,

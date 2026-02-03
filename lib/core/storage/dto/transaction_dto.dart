@@ -9,7 +9,7 @@ class TransactionDto extends HiveObject {
   final String id;
 
   @HiveField(1)
-  final String type; // 'income' or 'expense'
+  final int type; // '0 for income' or '1 expense'
 
   @HiveField(2)
   final double amount;
@@ -32,11 +32,10 @@ class TransactionDto extends HiveObject {
     this.notes,
   });
 
-  // Convert from entity to DTO
   factory TransactionDto.fromEntity(Transaction transaction) {
     return TransactionDto(
       id: transaction.id,
-      type: transaction.type == TransactionType.income ? 'income' : 'expense',
+      type: transaction.type == TransactionType.income ? 0 : 1,
       amount: transaction.amount,
       category: transaction.category,
       date: transaction.date,
@@ -44,11 +43,10 @@ class TransactionDto extends HiveObject {
     );
   }
 
-  // Convert from DTO to entity
   Transaction toEntity() {
     return Transaction(
       id: id,
-      type: type == 'income' ? TransactionType.income : TransactionType.expense,
+      type: type == 0 ? TransactionType.income : TransactionType.expense,
       amount: amount,
       category: category,
       date: date,
